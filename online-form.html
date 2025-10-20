@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Online Contact Form - Muhammad Zazmi</title>
+  <link rel="stylesheet" href="style.css" />
+  <meta name="description" content="Online contact form to reach Muhammad Zazmi for opportunities and collaboration." />
+  <link rel="icon" href="assets/favicon.ico" type="image/x-icon" />
+</head>
+<body>
+
+  <header>
+    <h1>Get in Touch - Contact Form</h1>
+  </header>
+
+  <nav aria-label="Primary Navigation">
+    <a href="index.html">Home</a>
+    <a href="about.html">About Me</a>
+    <a href="resume.html">Resume</a>
+    <a href="portfolio.html">Portfolio</a>
+    <a href="skills.html">Skills & Achievements</a>
+    <a href="contact.html">Get in Touch</a>
+  </nav>
+
+  <main>
+    <section>
+      <form id="contactForm" novalidate>
+        <label for="fullname">Full Name *</label>
+        <input type="text" id="fullname" name="fullname" required>
+
+        <label for="email">Email Address *</label>
+        <input type="email" id="email" name="email" required>
+
+        <label for="phone">Phone Number *</label>
+        <input type="tel" id="phone" name="phone" required>
+
+        <label for="company">Organization / Company Name *</label>
+        <input type="text" id="company" name="company" required>
+
+        <label for="industry">Industry Field *</label>
+        <select id="industry" name="industry" required onchange="toggleIndustryOther()">
+          <option value="">-- Select Industry --</option>
+          <option>Creative & Design</option>
+          <option>Information Technology</option>
+          <option>Engineering & Manufacturing</option>
+          <option>Education & Training</option>
+          <option>Healthcare & Medical</option>
+          <option>Finance & Accounting</option>
+          <option>Marketing & Advertising</option>
+          <option>Legal & Compliance</option>
+          <option>Logistics & Supply Chain</option>
+          <option>Government & Public Sector</option>
+          <option>Retail & E-commerce</option>
+          <option>Telecommunications</option>
+          <option>Energy & Utilities</option>
+          <option>Hospitality & Tourism</option>
+          <option>Media & Entertainment</option>
+          <option>Non-Profit & NGO</option>
+          <option>Real Estate & Property</option>
+          <option>Automotive</option>
+          <option>Agriculture & Environment</option>
+          <option value="Other">Other</option>
+        </select>
+        <input type="text" id="industryOther" name="industryOther" placeholder="Please specify" style="display:none; margin-top: 8px;">
+
+        <label for="interest">Areas of Interest *</label>
+        <select id="interest" name="interest" required onchange="toggleInterestOther()">
+          <option value="">-- Select Area --</option>
+          <option>Project Collaboration</option>
+          <option>Networking / Mentorship</option>
+          <option>Job Opportunity</option>
+          <option>Internship / Training</option>
+          <option>Business Partnership</option>
+          <option>Speaking Engagements</option>
+          <option>Research & Development</option>
+          <option>Volunteer Work</option>
+          <option>Product Feedback</option>
+          <option value="Other">Other</option>
+        </select>
+        <input type="text" id="interestOther" name="interestOther" placeholder="Please specify" style="display:none; margin-top: 8px;">
+
+        <label>Preferred Contact Method *</label>
+        <label><input type="radio" name="contactMethod" value="Email" required> Email</label>
+        <label><input type="radio" name="contactMethod" value="Phone"> Phone</label>
+
+        <label for="comments">Additional Comments</label>
+        <textarea id="comments" name="comments" rows="5"></textarea>
+
+        <div style="margin-top: 20px;">
+          <input type="submit" value="Submit" class="download-btn">
+          <button type="button" onclick="location.href='index.html'" class="download-btn" style="background-color: #ccc; color: #000;">Cancel</button>
+        </div>
+      </form>
+
+      <div id="formSuccess" style="display: none; margin-top: 40px;">
+        <h2 style="color: green;">✅ Message Sent Successfully!</h2>
+        <div id="formOutput"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>Contact: <a href="mailto:muhammadzazmi@gmail.com">muhammadzazmi@gmail.com</a></p>
+  </footer>
+
+  <script>
+    const form = document.getElementById('contactForm');
+    const output = document.getElementById('formOutput');
+    const successSection = document.getElementById('formSuccess');
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      // Gather values
+      const fullName = document.getElementById('fullname').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const company = document.getElementById('company').value.trim();
+      const industry = document.getElementById('industry').value;
+      const industryOther = document.getElementById('industryOther').value.trim();
+      const interest = document.getElementById('interest').value;
+      const interestOther = document.getElementById('interestOther').value.trim();
+      const contactMethod = document.querySelector('input[name="contactMethod"]:checked');
+      const comments = document.getElementById('comments').value.trim();
+
+      // Validation
+      if (!fullName || !email || !phone || !company || !industry || !interest || !contactMethod) {
+        alert("⚠️ Please fill in all required fields before submitting.");
+        return;
+      }
+
+      const emailPattern = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+      if (!emailPattern.test(email)) {
+        alert("⚠️ Please enter a valid email address.");
+        return;
+      }
+
+      const finalIndustry = industry === "Other" ? industryOther : industry;
+      const finalInterest = interest === "Other" ? interestOther : interest;
+
+      successSection.style.display = "block";
+
+      output.innerHTML = `
+        <p><strong>Full Name:</strong> ${sanitize(fullName)}</p>
+        <p><strong>Email:</strong> ${sanitize(email)}</p>
+        <p><strong>Phone Number:</strong> ${sanitize(phone)}</p>
+        <p><strong>Organization:</strong> ${sanitize(company)}</p>
+        <p><strong>Industry Field:</strong> ${sanitize(finalIndustry)}</p>
+        <p><strong>Areas of Interest:</strong> ${sanitize(finalInterest)}</p>
+        <p><strong>Preferred Contact Method:</strong> ${sanitize(contactMethod.value)}</p>
+        <p><strong>Additional Comments:</strong><br>${sanitize(comments).replace(/\n/g, '<br>')}</p>
+      `;
+
+      form.reset();
+      document.getElementById('industryOther').style.display = 'none';
+      document.getElementById('interestOther').style.display = 'none';
+    });
+
+    function toggleIndustryOther() {
+      const value = document.getElementById('industry').value;
+      document.getElementById('industryOther').style.display = (value === 'Other') ? 'block' : 'none';
+    }
+
+    function toggleInterestOther() {
+      const value = document.getElementById('interest').value;
+      document.getElementById('interestOther').style.display = (value === 'Other') ? 'block' : 'none';
+    }
+
+    function sanitize(str) {
+      return str.replace(/[&<>"']/g, function (char) {
+        const map = {
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#039;',
+        };
+        return map[char];
+      });
+    }
+  </script>
+</body>
+</html>
